@@ -9,7 +9,7 @@ ppow<-get_pow("Pinus sylvestris", accepted = TRUE, rows = 1, messages=FALSE)
 ppow_data<-pow_lookup(ppow[1])
 key<-name_backbone(name=paste(ppow_data$meta$name))$usageKey
 
-#retrieve data from gbif
+#retrieve data from gbif, for all options see: https://www.rdocumentation.org/packages/rgbif/versions/3.4.0/topics/occ_search 
 occ<-occ_search(taxonKey=key, country = "SE", year="1000,2021", fields="all", hasCoordinate = T, hasGeospatialIssue = F,limit=100)
 
 #access the data
@@ -55,12 +55,6 @@ occ_points <- occ_points[!is.na(sp::over(occ_points, sp::geometry(ext1))), ]
 plot(ext1)
 plot(occ_points, add=T)
 
-
-
-
-
-
-
 #Basis of record, as defined in our BasisOfRecord enum here https://gbif.github.io/gbif-api/apidocs/org/gbif/api/vocabulary/BasisOfRecord.html Acceptable values are:
 #FOSSIL_SPECIMEN An occurrence record describing a fossilized specimen.
 #HUMAN_OBSERVATION An occurrence record describing an observation made by one or more people.
@@ -70,17 +64,18 @@ plot(occ_points, add=T)
 #OBSERVATION An occurrence record describing an observation.
 #PRESERVED_SPECIMEN An occurrence record describing a preserved specimen.
 #UNKNOWN Unknown basis for the record.
+occ<-occ_search(taxonKey=key, geometry=c(bbox(ext1)), year="1000,2021", fields="all", basisOfRecord = "PRESERVED_SPECIMEN",hasCoordinate = T, hasGeospatialIssue = F,limit=100)
+occ$data$basisOfRecord
 
+#counting the number of observations based on different parameters see: https://www.rdocumentation.org/packages/rgbif/versions/3.3.0/topics/occ_count
+occ_count(taxonKey=key, country="SE",basisOfRecord = "PRESERVED_SPECIMEN", georeferenced = TRUE,
+          from=1000, to=2021)
 
-
-
-
-
-
-
-
-
-
+occ<-occ_search(taxonKey=key, country = "SE", year="1000,2021", fields="all", basisOfRecord = "PRESERVED_SPECIMEN",hasCoordinate = T, hasGeospatialIssue = F,
+                start = as.numeric(occ_count(taxonKey=key, country="SE",basisOfRecord = "PRESERVED_SPECIMEN", georeferenced = TRUE,
+                                             from=1000, to=2021)-100))
+nrow(occ$data)
+min(occ$data$year)
 #for other databases checkout: https://docs.ropensci.org/spocc/ 
   
   
