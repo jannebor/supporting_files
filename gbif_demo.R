@@ -68,14 +68,33 @@ occ<-occ_search(taxonKey=key, geometry=c(bbox(ext1)), year="1000,2021", fields="
 occ$data$basisOfRecord
 
 #counting the number of observations based on different parameters see: https://www.rdocumentation.org/packages/rgbif/versions/3.3.0/topics/occ_count
-occ_count(taxonKey=key, country="SE",basisOfRecord = "PRESERVED_SPECIMEN", georeferenced = TRUE,
-          from=1000, to=2021)
+occ_count(taxonKey=key, country="SE",basisOfRecord = "HUMAN_OBSERVATION", georeferenced = TRUE)
 
-occ<-occ_search(taxonKey=key, country = "SE", year="1000,2021", fields="all", basisOfRecord = "PRESERVED_SPECIMEN",hasCoordinate = T, hasGeospatialIssue = F,
-                start = as.numeric(occ_count(taxonKey=key, country="SE",basisOfRecord = "PRESERVED_SPECIMEN", georeferenced = TRUE,
-                                             from=1000, to=2021)-100))
+#by counting how many observations there are in total we can set a start parameter and retrieve the oldest 500 observations:
+occ<-occ_search(taxonKey=key, country = "SE", fields=c('name','latitude','longitude','year'), basisOfRecord = "HUMAN_OBSERVATION",hasCoordinate = T, hasGeospatialIssue = F,
+                limit=500,
+                start = as.numeric(occ_count(taxonKey=key, country="SE",basisOfRecord = "HUMAN_OBSERVATION", georeferenced = TRUE)-500))
+
+occ
 nrow(occ$data)
-min(occ$data$year)
+occ$data$year
+min(na.exclude(occ$data$year))
+
+#exemplary workaround for large datasets:
+i<-1
+while(is.null(occ$data$year)){
+  occ<-occ_search(taxonKey=key, country = "SE", fields="all", basisOfRecord = "HUMAN_OBSERVATION",hasCoordinate = T, hasGeospatialIssue = F,
+                  limit=500,
+                  start = as.numeric(occ_count(taxonKey=key, country="SE",basisOfRecord = "HUMAN_OBSERVATION", georeferenced = TRUE)-(500*i)))
+  print(i)
+  i<-i+1
+}
+
+
+occ
+nrow(occ$data)
+occ$data$year
+min(na.exclude(occ$data$year))
 #for other databases checkout: https://docs.ropensci.org/spocc/ 
   
   
