@@ -9,8 +9,6 @@ ppow<-get_pow("Pinus sylvestris", accepted = TRUE, rows = 1, messages=FALSE)
 ppow_data<-pow_lookup(ppow[1])
 key<-name_backbone(name=paste(ppow_data$meta$name))$usageKey
 
-
-
 #retrieve data from gbif
 occ<-occ_search(taxonKey=key, country = "SE", year="1000,2021", fields="all", hasCoordinate = T, hasGeospatialIssue = F,limit=100)
 
