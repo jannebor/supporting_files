@@ -3,7 +3,7 @@ library(rgbif)
 #retrieving a machine readable key for gbif
 key<-name_backbone(name="Pinus sylvestris")$usageKey
 
-#if naming issues are likely: get the accepted name first from taxize: POW, 
+#if naming issues are likely: get the accepted name first from taxize: POW, IPNI, etc... 
 library(taxize)
 ppow<-get_pow("Pinus sylvestris", accepted = TRUE, rows = 1, messages=FALSE)
 ppow_data<-pow_lookup(ppow[1])
