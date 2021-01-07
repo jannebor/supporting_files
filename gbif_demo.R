@@ -3,6 +3,8 @@ library(rgbif)
 #retrieving a machine readable key for gbif
 key<-name_backbone(name="Pinus sylvestris")$usageKey
 
+key<-name_backbone(name="Tracheophyta")$usageKey
+
 #if naming issues are likely: get the accepted name first from taxize: POW, IPNI, etc... 
 library(taxize)
 ppow<-get_pow("Pinus sylvestris", accepted = TRUE, rows = 1, messages=FALSE)
@@ -72,7 +74,7 @@ occ_count(taxonKey=key, country="SE",basisOfRecord = "HUMAN_OBSERVATION", georef
 
 #by counting how many observations there are in total we can set a start parameter and retrieve the oldest 500 observations:
 occ<-occ_search(taxonKey=key, country = "SE", fields=c('name','latitude','longitude','year'), basisOfRecord = "HUMAN_OBSERVATION",hasCoordinate = T, hasGeospatialIssue = F,
-                limit=500,
+                limit=500, year = "1500,2000",
                 start = as.numeric(occ_count(taxonKey=key, country="SE",basisOfRecord = "HUMAN_OBSERVATION", georeferenced = TRUE)-500))
 
 occ
